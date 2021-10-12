@@ -20,6 +20,8 @@
 package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.ManagedProcessListener;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -141,7 +143,7 @@ public class DBConfigurationBuilder {
      * Defines if the configured data and base directories should be deleted on shutdown.
      * If you've set the base and data directories to non temporary directories
      * using {@link #setBaseDir(String)} or {@link #setDataDir(String)},
-     * then they'll also never get deleted anyway. 
+     * then they'll also never get deleted anyway.
      * @param doDelete Default valule is true, set false to override
      * @return returns this
      */
@@ -204,7 +206,7 @@ public class DBConfigurationBuilder {
 
     protected String _getDataDir() {
         if (isNull(getDataDir()) || getDataDir().equals(DEFAULT_DATA_DIR))
-            return DEFAULT_DATA_DIR + SystemUtils.FILE_SEPARATOR + getPort();
+            return DEFAULT_DATA_DIR + File.separator + getPort();
         else
             return getDataDir();
     }

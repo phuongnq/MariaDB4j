@@ -39,7 +39,6 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import ch.vorburger.exec.ManagedProcess;
@@ -60,9 +59,8 @@ public class MariaDB4jSampleDumpTest {
 
     @Before public void beforeTest() throws ManagedProcessException, SQLException {
         config = DBConfigurationBuilder.newBuilder();
-        config.setPort(0);
-        db = DB.newEmbeddedDB(// 0 => autom. detect free port
-        config.build());
+        config.setPort(0);// 0 => autom. detect free port
+        db = DB.newEmbeddedDB(config.build());
         db.start();
         db.createDB("planetexpress");
         db.source("ch/vorburger/mariadb4j/dumpTest.sql");
@@ -97,7 +95,7 @@ public class MariaDB4jSampleDumpTest {
         // We just want to check that the file is a valid XML, output of it is mysqldump's responsability
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(outputDumpFile);
+        dBuilder.parse(outputDumpFile);
         FileUtils.forceDeleteOnExit(outputDumpFile);
     }
 
