@@ -41,6 +41,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
@@ -144,7 +147,8 @@ public class Mariadb4jStartMojoTest {
 
     private Connection openConnection(DB db, String databaseName) throws SQLException {
         assertThat(db).isNotNull();
-        String jdbcUrl = "jdbc:mysql://localhost:" + db.getConfiguration().getPort() + "/" + databaseName + "?serverTimezone=UTC";
+        String jdbcUrl = "jdbc:mysql://localhost:" + db.getConfiguration().getPort() + "/" + databaseName +
+                "?serverTimezone=UTC&user=root&password=root";
         return DriverManager.getConnection(jdbcUrl);
     }
 
