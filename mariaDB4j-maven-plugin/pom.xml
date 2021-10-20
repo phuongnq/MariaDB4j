@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom</artifactId>
-        <version>2.4.9</version>
+        <version>2.4.10</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -15,8 +15,6 @@
     <name>mariaDB4j-maven-plugin</name>
 
     <properties>
-        <!-- Maven set to 3.1.1 since spring-boot is also set to it,
-            this allows backwards compability, or when spring-boot maven min version increments -->
         <maven.version>3.6.3</maven.version>
         <skipTests>false</skipTests>
     </properties>
