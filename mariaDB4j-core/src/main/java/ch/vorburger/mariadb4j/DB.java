@@ -19,11 +19,18 @@
  */
 package ch.vorburger.mariadb4j;
 
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Client;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Dump;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.InstallDB;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.PrintDefaults;
+import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
+
 import ch.vorburger.exec.ManagedProcess;
 import ch.vorburger.exec.ManagedProcessBuilder;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.exec.ManagedProcessListener;
 import ch.vorburger.exec.OutputStreamLogDispatcher;
+import ch.vorburger.mariadb4j.DBConfiguration.Executable;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -59,6 +66,7 @@ public class DB {
     private File baseDir;
     private File libDir;
     private File dataDir;
+    private File tmpDir;
     private ManagedProcess mysqldProcess;
 
     protected int dbStartMaxWaitInMS = 30000;
@@ -111,14 +119,7 @@ public class DB {
 
     protected ManagedProcess createDBInstallProcess() throws ManagedProcessException, IOException {
         logger.info("Installing a new embedded database to: " + baseDir);
-        File installDbCmdFile = newExecutableFile("bin", "mysql_install_db");
-        if (!installDbCmdFile.exists()) {
-            installDbCmdFile = newExecutableFile("scripts", "mysql_install_db");
-        }
-        if (!installDbCmdFile.exists()) {
-            throw new ManagedProcessException(
-                    "mysql_install_db was not found, neither in bin/ nor in scripts/ under " + baseDir.getAbsolutePath());
-        }
+        File installDbCmdFile = configuration.getExecutable(Executable.InstallDB);
         ManagedProcessBuilder builder = new ManagedProcessBuilder(installDbCmdFile);
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql_install_db"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
@@ -127,6 +128,8 @@ public class DB {
             // Since 10.4.6, this needs to be specified to allow root login from any user and avoid creating an extra user,
             // basically like it used to do in 10.3 and before
             builder.addArgument("--auth-root-authentication-method=normal");
+            builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false);
+            builder.addArgument("--tmpdir=" + tmpDir.getAbsolutePath(), false);
             builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
@@ -134,6 +137,7 @@ public class DB {
             // builder.addArgument("--verbose");
         } else {
             builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
+            builder.addFileArgument("--tmpdir", tmpDir.getCanonicalFile());
         }
         return builder.build();
     }
@@ -177,7 +181,6 @@ public class DB {
         logger.info("Installation complete.");
     }
 
-
     /**
      * Runs mysql secure installation script.
      *
@@ -202,7 +205,8 @@ public class DB {
             }
 
             boolean secured = false;
-            try (Connection conn = DriverManager.getConnection(configuration.getURL("mysql"), "root", "")) {
+            String jdbcUrl = "jdbc:mysql://localhost:" + configuration.getPort() + "/mysql";
+            try (Connection conn = DriverManager.getConnection(jdbcUrl, "root", "")) {
                 secured = false;
                 logger.info("Unsecured database detected, running the secure installation script against the database.");
             } catch (SQLException e) {
@@ -259,11 +263,11 @@ public class DB {
     }
 
     protected String getReadyForConnectionsTag() {
-        return "mysqld" + getWinExeExt() + ": ready for connections.";
+        return ": ready for connections.";
     }
 
     synchronized ManagedProcess startPreparation() throws ManagedProcessException, IOException {
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqld"));
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Server));
         builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysqld"));
         builder.getEnvironment().put(configuration.getOSLibraryEnvironmentVarName(), libDir.getAbsolutePath());
         builder.addArgument("--no-defaults"); // *** THIS MUST COME FIRST ***
@@ -275,10 +279,20 @@ public class DB {
             builder.addArgument("--max_allowed_packet=64M");
         }
         builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false).setWorkingDirectory(baseDir);
-        builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false);
+
+        if (!configuration.isWindows()) {
+            builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false);
+            builder.addArgument("--tmpdir=" + tmpDir.getAbsolutePath(), false);
+        } else {
+            builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
+            builder.addFileArgument("--tmpdir", tmpDir.getCanonicalFile());
+        }
         addPortAndMaybeSocketArguments(builder);
         for (String arg : configuration.getArgs()) {
             builder.addArgument(arg);
+        }
+        if (StringUtils.isNotBlank(configuration.getDefaultCharacterSet())) {
+            builder.addArgument("--character-set-server=", configuration.getDefaultCharacterSet());
         }
         cleanupOnExit();
         // because cleanupOnExit() just installed our (class DB) own
@@ -426,9 +440,10 @@ public class DB {
             throws ManagedProcessException {
         logger.info("Running a " + logInfoText);
         try {
-            ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysql"));
+            ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Client));
             builder.setOutputStreamLogDispatcher(getOutputStreamLogDispatcher("mysql"));
             builder.setWorkingDirectory(baseDir);
+            builder.addArgument("--default-character-set=utf8");
             if (username != null && !username.isEmpty()) {
                 builder.addArgument("-u", username);
             }
@@ -447,6 +462,9 @@ public class DB {
             }
             if (configuration.getProcessListener() != null) {
                 builder.setProcessListener(configuration.getProcessListener());
+            }
+            if (configuration.getDefaultCharacterSet() != null) {
+                builder.addArgument("--default-character-set=", configuration.getDefaultCharacterSet());
             }
 
             ManagedProcess process = builder.build();
@@ -498,12 +516,11 @@ public class DB {
         try {
             Util.extractFromClasspathToFile(configuration.getBinariesClassPathLocation(), baseDir);
             if (!configuration.isWindows()) {
-                Util.forceExecutable(newExecutableFile("bin", "my_print_defaults"));
-                Util.forceExecutable(newExecutableFile("bin", "mysql_install_db"));
-                Util.forceExecutable(newExecutableFile("scripts", "mysql_install_db"));
-                Util.forceExecutable(newExecutableFile("bin", "mysqld"));
-                Util.forceExecutable(newExecutableFile("bin", "mysqldump"));
-                Util.forceExecutable(newExecutableFile("bin", "mysql"));
+                Util.forceExecutable(configuration.getExecutable(PrintDefaults));
+                Util.forceExecutable(configuration.getExecutable(InstallDB));
+                Util.forceExecutable(configuration.getExecutable(Server));
+                Util.forceExecutable(configuration.getExecutable(Dump));
+                Util.forceExecutable(configuration.getExecutable(Client));
                 Util.forceExecutable(newExecutableFile("bin", "mysql_secure_installation"));
                 Util.forceExecutable(newExecutableFile("bin", "mysql_upgrade"));
                 Util.forceExecutable(newExecutableFile("bin", "mysqlcheck"));
@@ -523,6 +540,7 @@ public class DB {
     protected void prepareDirectories() throws ManagedProcessException {
         baseDir = Util.getDirectory(configuration.getBaseDir());
         libDir = Util.getDirectory(configuration.getLibDir());
+        tmpDir = Util.getDirectory(configuration.getTmpDir());
         try {
             String dataDirPath = configuration.getDataDir();
             if (Util.isTemporaryDirectory(dataDirPath)) {
@@ -541,8 +559,9 @@ public class DB {
     protected void cleanupOnExit() {
         String threadName = "Shutdown Hook Deletion Thread for Temporary DB " + dataDir.toString();
         final DB db = this;
-        Runtime.getRuntime()
-                .addShutdownHook(new DBShutdownHook(threadName, db, () -> mysqldProcess, () -> baseDir, () -> dataDir, configuration));
+        Runtime.getRuntime().addShutdownHook(
+            new DBShutdownHook(threadName, db, () -> mysqldProcess, () -> baseDir, () -> dataDir, () -> tmpDir, configuration)
+        );
     }
 
     // The dump*() methods are intentionally *NOT* made "synchronized",
@@ -565,7 +584,7 @@ public class DB {
     protected ManagedProcess dump(File outputFile, List<String> dbNamesToDump, boolean compactDump, boolean lockTables, boolean asXml,
             String user, String password) throws ManagedProcessException, IOException {
 
-        ManagedProcessBuilder builder = new ManagedProcessBuilder(newExecutableFile("bin", "mysqldump"));
+        ManagedProcessBuilder builder = new ManagedProcessBuilder(configuration.getExecutable(Dump));
 
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
         builder.addStdOut(outputStream);
