@@ -295,13 +295,13 @@ public class DBConfigurationBuilder {
         String databaseVersion = getDatabaseVersion();
         if (databaseVersion == null) {
             if (OSX.equals(getOS()))
-                databaseVersion = "mariadb-10.4.31.1";
+                databaseVersion = "mariadb-10.4.31.2";
             else if (ALPINE.equals(getOS()))
-                databaseVersion = "mariadb-10.4.31.1";
+                databaseVersion = "mariadb-10.4.31.2";
             else if (LINUX.equals(getOS()))
-                databaseVersion = "mariadb-10.4.31.1";
+                databaseVersion = "mariadb-10.4.31.2";
             else if (WIN64.equals(getOS()))
-                databaseVersion = "mariadb-10.4.31.1";
+                databaseVersion = "mariadb-10.4.31.2";
             else
                 throw new IllegalStateException(
                         "OS not directly supported, please use setDatabaseVersion() to set the name "
