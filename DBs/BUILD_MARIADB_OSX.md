@@ -21,9 +21,7 @@
 -DWITH_SSL=/Users/osx/dev/openssl -DCMAKE_C_FLAGS="-Wno-deprecated-declarations" 
 -DCMAKE_OSX_SYSROOT=/Users/osx/dev/MacOSX10.13.sdk -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DWITHOUT_TOKUDB=1 
 -DWITH_SSL=yes -DDEFAULT_CHARSET=UTF8 -DDEFAULT_COLLATION=utf8_general_ci -DCOMPILATION_COMMENT=CrafterCms  
--DWITH_PCRE=bundled -DWITH_READLINE=on  -DWITH_JEMALLOC=/usr/local/Cellar/jemalloc/5.2.0/includeke ../ 
--DBUILD_CONFIG=mysql_release -DCMAKE_INSTALL_PREFIX=~/dev/mariadb -DOPENSSL_INCLUDE_DIR=/Users/osx/dev/openssl/include -DOPENSSL_LIBRARIES=/Users/osx/dev/openssl/lib/libssl.a -DCRYPTO_LIBRARY=/Users/osx/dev/openssl/lib/libcrypto.a  -DOPENSSL_ROOT_DIR=/Users/osx/dev/openssl -DWITH_SSL=/Users/osx/dev/openssl -DCMAKE_C_FLAGS="-Wno-deprecated-declarations" -DCMAKE_OSX_SYSROOT=/Users/osx/dev/MacOSX10.13.sdk -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DWITHOUT_TOKUDB=1 -DWITH_SSL=yes -DDEFAULT_CHARSET=UTF8 -DDEFAULT_COLLATION=utf8_general_ci -DCOMPILATION_COMMENT=CrafterCms  -DWITH_PCRE=bundled -DWITH_READLINE=on  -DWITH_JEMALLOC=/usr/local/Cellar/jemalloc/5.2.0/include
-`
+-DWITH_PCRE=bundled -DWITH_READLINE=on  -DWITH_JEMALLOC=/usr/local/Cellar/jemalloc/5.2.0/include`
 16. run `make`
 17. run `make install`
 18. the binaries should be in this folder `~/dev/mariadb`
