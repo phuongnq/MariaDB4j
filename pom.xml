@@ -1,18 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom-lite</artifactId>
         <!-- Do NOT depend on a SNAPSHOT here!
              Note that this parent version and the version below are, intentionally, completely unrelated. -->
-        <version>2.6.0.7</version>
+        <version>2.6.0.8</version>
         <relativePath>mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
-	<artifactId>mariaDB4j-pom</artifactId>
-	<version>2.6.0.7</version>
-	<packaging>pom</packaging>
+    <artifactId>mariaDB4j-pom</artifactId>
+    <version>2.6.0.8</version>
+    <packaging>pom</packaging>
 
     <scm>
         <!-- The <connection> and <url> are specified in the <parent> but the
@@ -24,36 +25,36 @@
         <tag>HEAD</tag>
     </scm>
 
-	<modules>
-		<module>mariaDB4j-pom-lite</module>
+    <modules>
+        <module>mariaDB4j-pom-lite</module>
         <!-- <module>DBs</module> -->
-		<module>mariaDB4j-core</module>
-		<module>mariaDB4j</module>
-		<module>mariaDB4j-app</module>
-		<module>mariaDB4j-springboot</module>
-		<module>mariaDB4j-maven-plugin</module>
-	</modules>
+        <module>mariaDB4j-core</module>
+        <module>mariaDB4j</module>
+        <module>mariaDB4j-app</module>
+        <module>mariaDB4j-springboot</module>
+        <module>mariaDB4j-maven-plugin</module>
+    </modules>
 
-	<properties>
-		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		 <springframework.version>5.3.29</springframework.version>
-		 <springboot.version>2.7.15</springboot.version>
-		 <maven.compiler.source>11</maven.compiler.source>
-		 <maven.compiler.target>11</maven.compiler.target>
-		<snakeyaml.version>2.0</snakeyaml.version> <!-- Override the version defined by spring-boot -->
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <springframework.version>5.3.29</springframework.version>
+        <springboot.version>2.7.15</springboot.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <snakeyaml.version>2.0</snakeyaml.version> <!-- Override the version defined by spring-boot -->
+    </properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.10.1</version>
-				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
-				</configuration>
-			</plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -71,26 +72,26 @@
                 </executions>
             </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>3.0.0-M6</version>
-				<configuration>
-				    <useReleaseProfile>false</useReleaseProfile>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.0-M6</version>
+                <configuration>
+                    <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>release</releaseProfiles>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-					<!--https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
-						http://jira.codehaus.org/browse/MGPG-9 & http://jira.codehaus.org/browse/MRELEASE-263 -->
-					<mavenExecutorId>forked-path</mavenExecutorId>
-					<!-- Following is required because artifactId is (now) mariaDB4j-pom, but we want mariaDB4j -->
-					<tagNameFormat>mariaDB4j-@{project.version}</tagNameFormat>
-				</configuration>
-			</plugin>
+                    <!--https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven
+                        http://jira.codehaus.org/browse/MGPG-9 & http://jira.codehaus.org/browse/MRELEASE-263 -->
+                    <mavenExecutorId>forked-path</mavenExecutorId>
+                    <!-- Following is required because artifactId is (now) mariaDB4j-pom, but we want mariaDB4j -->
+                    <tagNameFormat>mariaDB4j-@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>2.0.0</version>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.0.0</version>
                 <configuration>
                     <licenseName>apache_v2</licenseName>
                     <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
@@ -101,65 +102,65 @@
                         <root>src/test/java</root>
                     </roots>
                 </configuration>
-				<executions>
-				    <execution>
-				        <phase>validate</phase>
-				        <goals>
-				            <goal>check-file-header</goal>
-				        </goals>
-				    </execution>
-				</executions>
-			</plugin>
-<!--
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.2.0</version>
-				<dependencies>
-                    <dependency>
-                        <groupId>com.puppycrawl.tools</groupId>
-                        <artifactId>checkstyle</artifactId>
-                        <version>10.3.3</version>
-                    </dependency>
-                </dependencies>
-				<configuration>
-					<configLocation>checkstyle.xml</configLocation>
-					<!- https://github.com/vorburger/MariaDB4j/issues/511 ->
-					<sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
-					<includeTestSourceDirectory>true</includeTestSourceDirectory>
-					<encoding>UTF-8</encoding>
-					<consoleOutput>true</consoleOutput>
-					<failsOnError>true</failsOnError>
-				</configuration>
-				<executions>
-					<execution>
-						<id>validate</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
--->
-		</plugins>
-	</build>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check-file-header</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-checkstyle-plugin</artifactId>
+                            <version>3.2.0</version>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>com.puppycrawl.tools</groupId>
+                                    <artifactId>checkstyle</artifactId>
+                                    <version>10.3.3</version>
+                                </dependency>
+                            </dependencies>
+                            <configuration>
+                                <configLocation>checkstyle.xml</configLocation>
+                                <!- https://github.com/vorburger/MariaDB4j/issues/511 ->
+                                <sourceDirectories>${project.build.sourceDirectory}</sourceDirectories>
+                                <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                                <encoding>UTF-8</encoding>
+                                <consoleOutput>true</consoleOutput>
+                                <failsOnError>true</failsOnError>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>validate</id>
+                                    <phase>validate</phase>
+                                    <goals>
+                                        <goal>check</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+            -->
+        </plugins>
+    </build>
 
-	<dependencyManagement>
-	     <dependencies>
-	        <dependency>
-	            <groupId>org.springframework.boot</groupId>
-	            <artifactId>spring-boot-dependencies</artifactId>
-	            <version>${springboot.version}</version>
-	            <type>pom</type>
-	            <scope>import</scope>
-	        </dependency>
-	        <dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-simple</artifactId>
-	            <version>2.0.2</version>
-	            <scope>test</scope>
-			</dependency>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${springboot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>2.0.2</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -171,6 +172,11 @@
                 <version>1.7</version>
                 <scope>test</scope>
             </dependency>
-	    </dependencies>
-	</dependencyManagement>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
