@@ -35,7 +35,7 @@ function preFlightCheck() {
 		brew install cmake
 	fi
 
-	if ! type -p jemalloc > /dev/null 2>&1; then
+	if ! brew list jemalloc > /dev/null 2>&1; then
 		cecho "jemalloc command not found, will attempt to install.\n" "warning"
 		brew install jemalloc
 		JEMALLOC_VERSION=$(brew list --version jemalloc | cut -f 2 -d ' ')
@@ -70,6 +70,8 @@ function buildMariaDB() {
 	pushd .
 	mkdir -p ~/dev/mariadb-build
 	cd ~/dev/mariadb-build
+	# When building MariaDB 10.4.31 for Mac, we must patch/fix the code per https://jira.mariadb.org/browse/MDEV-27579
+	cp "$LAUNCH_DIR/mysql-10.4.31.cc" ~/dev/mariadb-source/client/mysql.cc
 	cmake ../mariadb-source -DBUILD_CONFIG=mysql_release -DCMAKE_INSTALL_PREFIX=~/dev/mariadb -DOPENSSL_INCLUDE_DIR=/Users/$USER/dev/openssl/include -DOPENSSL_LIBRARIES=/Users/$USER/dev/openssl/lib/libssl.a -DCRYPTO_LIBRARY=/Users/$USER/dev/openssl/lib/libcrypto.a -DOPENSSL_ROOT_DIR=/Users/$USER/dev/openssl -DWITH_SSL=/Users/$USER/dev/openssl -DCMAKE_C_FLAGS="-Wno-deprecated-declarations" -DCMAKE_OSX_SYSROOT=/Users/$USER/dev/MacOSX10.12.sdk -DCMAKE_OSX_DEPLOYMENT_TARGET=10.12 -DWITHOUT_TOKUDB=1 -DWITH_SSL=yes -DDEFAULT_CHARSET=UTF8 -DDEFAULT_COLLATION=utf8_general_ci -DCOMPILATION_COMMENT=CrafterCms -DWITH_PCRE=bundled -DWITH_READLINE=on  -DWITH_JEMALLOC=/usr/local/Cellar/jemalloc/$JEMALLOC_VERSION/include
 	make
 	make install
@@ -91,6 +93,8 @@ function main() {
 	buildMariaDB
 	copyMariaDBArtifacts
 }
+
+LAUNCH_DIR=`pwd`
 
 pushd .
 preFlightCheck
