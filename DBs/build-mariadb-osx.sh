@@ -1,7 +1,9 @@
 #!/bin/bash
 
 JEMALLOC_VERSION=5.3.0
-TARGET_DIR="$LAUNCH_DIR/mariaDB4j-db-mac64-10.4.31.2/src/main/resources/ch/vorburger/mariadb4j/mariadb-10.4.31.2/osx/"
+MARIADB_VERSION=10.4.31
+MARIADB_CRAFTER_VERSION=10.4.31.2
+TARGET_DIR="$LAUNCH_DIR/mariaDB4j-db-mac64-$MARIADB_CRAFTER_VERSION/src/main/resources/ch/vorburger/mariadb4j/mariadb-$MARIADB_CRAFTER_VERSION/osx/"
 
 cecho () {
 	if [ "$2" == "info" ] ; then
@@ -102,7 +104,7 @@ function main() {
 	cd dev
 	downloadArtifact https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.12.sdk.tar.xz MacOSX10.12.sdk.tar.xz MacOSX10.12.sdk MacOSX10.12.sdk
 	downloadArtifact https://www.openssl.org/source/openssl-1.1.1v.tar.gz openssl-1.1.1v.tar.gz openssl-1.1.1v openssl
-	downloadArtifact https://mirror.its.dal.ca/mariadb//mariadb-10.4.31/source/mariadb-10.4.31.tar.gz mariadb-10.4.31.tar.gz mariadb-10.4.31 mariadb-source
+	downloadArtifact https://mirror.its.dal.ca/mariadb/mariadb-$MARIADB_VERSION/source/mariadb-$MARIADB_VERSION.tar.gz mariadb-$MARIADB_VERSION.tar.gz mariadb-$MARIADB_VERSION mariadb-source
 
 	buildOpenSSL
 	buildMariaDB
