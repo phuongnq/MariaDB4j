@@ -129,7 +129,6 @@ public class DB {
             // basically like it used to do in 10.3 and before
             builder.addArgument("--auth-root-authentication-method=normal");
             builder.addArgument("--datadir=" + dataDir.getAbsolutePath(), false);
-            builder.addArgument("--tmpdir=" + tmpDir.getAbsolutePath(), false);
             builder.addArgument("--basedir=" + baseDir.getAbsolutePath(), false);
             builder.addArgument("--no-defaults");
             builder.addArgument("--force");
@@ -137,7 +136,6 @@ public class DB {
             // builder.addArgument("--verbose");
         } else {
             builder.addFileArgument("--datadir", dataDir.getCanonicalFile());
-            builder.addFileArgument("--tmpdir", tmpDir.getCanonicalFile());
         }
         return builder.build();
     }

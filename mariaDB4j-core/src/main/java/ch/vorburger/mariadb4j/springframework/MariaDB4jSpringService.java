@@ -21,6 +21,7 @@ package ch.vorburger.mariadb4j.springframework;
 
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.MariaDB4jService;
+import java.util.Objects;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.Lifecycle;
@@ -54,6 +55,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String UNPACK = "mariaDB4j.unpack";
     public final static String ARGS = "mariaDB4j.args";
     public final static String OS_USER = "mariaDB4j.osUser";
+    public final static String DEFAULT_CHARSET = "mariaDB4j.defaultCharset";
     public final static String SECURITY_DISABLED = "mariaDB4j.securityDisabled";
     public final static String DEFAULT_ROOT_PASSWORD = "mariaDB4j.defaultRootPassword";
     public final static String DRIVER_CLASS_NAME = "mariaDB4j.driverClassName";
@@ -120,6 +122,12 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public void setDefaultOsUser(String osUser) {
         if (!"NA".equals(osUser))
             getConfiguration().addArg("--user=" + osUser);
+    }
+
+    @Value("${" + DEFAULT_CHARSET + ":NA}")
+    public void setDefaultCharacterSet(String charset) {
+        if (!Objects.equals(charset, "NA"))
+            getConfiguration().setDefaultCharacterSet(charset);
     }
 
     @Value("${" + SECURITY_DISABLED + ":#{null}}")
