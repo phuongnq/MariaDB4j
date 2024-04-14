@@ -2,7 +2,7 @@
  * #%L
  * MariaDB4j
  * %%
- * Copyright (C) 2012 - 2014 Michael Vorburger
+ * Copyright (C) 2012 - 2023 Michael Vorburger
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -36,7 +37,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests the functioning of MariaDB4j Sample / Tutorial illustrating how to use MariaDB4j.
+ * Tests the functioning of MariaDB4j Sample / Tutorial illustrating how to use
+ * MariaDB4j.
  *
  * @author Michael Vorburger
  * @author Michael Seaton
@@ -44,25 +46,39 @@ import org.junit.Test;
 public class MariaDB4jSampleTutorialTest {
 
     /**
-     * Tests & illustrates using MariaDB4j with an existing native MariaDB binary on the host,
-     * instead of one that was bundled with and extracted from a MariaDB4j JAR.
+     * Tests & illustrates using MariaDB4j with an existing native MariaDB binary on
+     * the host, instead of one that was bundled with and extracted from a MariaDB4j JAR.
      */
     @Test public void testLocalMariaDB() throws Exception {
 //        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
-//        config.setPort(0); // 0 => autom. detect free port
-//        config.setSecurityDisabled(false);
-//        config.setDefaultRootPassword("root");
-//        config.setUnpackingFromClasspath(false);
-//        config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
-//        config.setBaseDir("/usr");
-//        config.setExecutable(Server, "/usr/sbin/mysqld");
-//        check(config);
+          // TODO rm isWindows() after making this test work on Windows, see https://github.com/vorburger/MariaDB4j/issues/713
+//        if (!config.isWindows()) {
+//            assertExecutable("/usr/sbin/mysqld");
+//
+//            config.setPort(0); // 0 => autom. detect free port
+//            config.setUnpackingFromClasspath(false);
+//            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
+//            config.setBaseDir("/usr");
+//            config.setExecutable(Server, "/usr/sbin/mysqld");
+//            check(config);
+//        } else {
+//            System.out.println("testLocalMariaDB() SKIPPED because isWindows()");
+//        }
+    }
+
+    private void assertExecutable(String path) {
+        if (!(new File(path).canExecute())) {
+            throw new IllegalStateException(path
+                    + " not found/executable, but required for (only) this test; try e.g. sudo apt install mariadb-server ?");
+        }
     }
 
     /**
-     * Illustrates how to use a mysqld binary that is extracted from "embedded" binaries in JAR on classpath.
+     * Illustrates how to use a mysqld binary that is extracted from "embedded"
+     * binaries in JAR on classpath.
      */
-    @Test public void testEmbeddedMariaDB4j() throws Exception {
+    @Test
+    public void testEmbeddedMariaDB4j() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
         check(config);
@@ -73,7 +89,7 @@ public class MariaDB4jSampleTutorialTest {
         db.start();
 
         String dbName = "mariaDB4jTest"; // or just "test"
-        if (!dbName.equals("test")) {
+        if (!"test".equals(dbName)) {
             // mysqld out-of-the-box already has a DB named "test"
             // in case we need another DB, here's how to create it first
             db.createDB(dbName, "root", "root");
@@ -108,7 +124,8 @@ public class MariaDB4jSampleTutorialTest {
         }
     }
 
-    @Test public void testEmbeddedMariaDB4jWithSecurity() throws Exception {
+    @Test
+    public void testEmbeddedMariaDB4jWithSecurity() throws Exception {
         DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
         config.setPort(0); // 0 => autom. detect free port
         config.setSecurityDisabled(false);
@@ -117,7 +134,7 @@ public class MariaDB4jSampleTutorialTest {
         db.start();
 
         String dbName = "mariaDB4jTestWSecurity"; // or just "test"
-        if (!dbName.equals("test")) {
+        if (!"test".equals(dbName)) {
             // mysqld out-of-the-box already has a DB named "test"
             // in case we need another DB, here's how to create it first
             db.createDB(dbName, "root", "root");

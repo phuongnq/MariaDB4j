@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.craftercms.mariaDB4j</groupId>
         <artifactId>mariaDB4j-pom</artifactId>
-        <version>2.6.0.9</version>
+        <version>3.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -211,7 +211,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <!-- Include slf4j-api in the plugin jar to ensure some versions of maven don't have logging issues.
+                <!-- Include slf4j-api in the plugin jar to ensure some versions of maven don't have
+                logging issues.
                      Deprecate when min maven version is 3.3.9+ currently we allow 3.1.1+
                      see https://issues.apache.org/jira/browse/MNG-5787 for details.
                 -->
@@ -237,7 +238,9 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <!--This
+                plugin's configuration is used to store Eclipse m2e settings only. It has no
+                influence on the Maven build itself.-->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
@@ -297,7 +300,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.5.1</version>
                         <configuration>
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                         </configuration>
