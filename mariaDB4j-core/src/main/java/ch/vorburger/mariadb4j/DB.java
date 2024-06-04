@@ -199,7 +199,7 @@ public class DB {
             }
 
             boolean secured = false;
-            String jdbcUrl = "jdbc:mysql://localhost:" + configuration.getPort() + "/mysql";
+            String jdbcUrl = "jdbc:mysql://localhost:" + configuration.getPort() + "/mysql?permitMysqlScheme";
             try (Connection conn = DriverManager.getConnection(jdbcUrl, "root", "")) {
                 secured = false;
                 logger.debug("Connection detail: '{}'", conn);
