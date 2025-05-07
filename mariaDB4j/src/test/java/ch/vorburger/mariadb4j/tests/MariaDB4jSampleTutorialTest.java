@@ -24,11 +24,7 @@ import static ch.vorburger.mariadb4j.DBConfiguration.Executable.Server;
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.List;
+
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ColumnListHandler;
@@ -36,6 +32,12 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Tests the functioning of MariaDB4j Sample / Tutorial illustrating how to use
@@ -47,43 +49,47 @@ import org.junit.Test;
 public class MariaDB4jSampleTutorialTest {
 
     /**
-     * Tests & illustrates using MariaDB4j with an existing native MariaDB binary on
-     * the host, instead of one that was bundled with and extracted from a MariaDB4j JAR.
+     * Tests & illustrates using MariaDB4j with an existing native MariaDB binary on the host,
+     * instead of one that was bundled with and extracted from a MariaDB4j JAR.
      */
     @Test
     public void testLocalMariaDB() throws Exception {
 //        final String LINUX_EXECUTABLE = "/usr/sbin/mysqld";
-//        final String WINDOWS_EXECUTABLE = "C:\\Program Files\\MariaDB 10.11\\bin\\mysqld.exe";
+//        final String MACOS_EXECUTABLE = "/opt/homebrew/opt/mariadb@11.4/bin/mariadbd";
+//        final String WINDOWS_EXECUTABLE = "C:\\Program Files\\MariaDB 11.4\\bin\\mysqld.exe";
 //
 //        DBConfigurationBuilder config = DBConfigurationBuilder.newBuilder();
 //
 //        config.setPort(0); // 0 => autom. detect free port
 //        config.setUnpackingFromClasspath(false);
 //
-//        if (!config.isWindows()) {
-//            assertExecutable(LINUX_EXECUTABLE);
-//            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs");
-//            config.setBaseDir("/usr");
-//            config.setExecutable(Server, LINUX_EXECUTABLE);
-//        } else {
-//            assertExecutable(WINDOWS_EXECUTABLE);
-//            config.setLibDir(SystemUtils.JAVA_IO_TMPDIR + "\\MariaDB4j\\no-libs");
-//            config.setBaseDir("C:\\Program Files\\MariaDB 10.11");
+//        if (config.isMacOS()) {
+//            config.setLibDir(new File(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs"));
+//            config.setBaseDir(new File("/opt/homebrew/opt/mariadb@11.4/"));
+//            config.setExecutable(Server, MACOS_EXECUTABLE);
+//        } else if (config.isWindows()) {
+//            config.setLibDir(new File(SystemUtils.JAVA_IO_TMPDIR + "\\MariaDB4j\\no-libs"));
+//            config.setBaseDir(new File("C:\\Program Files\\MariaDB 11.4"));
 //            config.setExecutable(Server, WINDOWS_EXECUTABLE);
+//        } else { // Linux
+//            config.setLibDir(new File(SystemUtils.JAVA_IO_TMPDIR + "/MariaDB4j/no-libs"));
+//            config.setBaseDir(new File("/usr"));
+//            config.setExecutable(Server, LINUX_EXECUTABLE);
 //        }
-//        check(config);
+//
+//        // Only actually run this test if the binary is available
+//        File executable = config.getExecutable(Server);
+//        if (executable.canExecute()) check(config);
+//        else
+//            System.err.println(
+//                    "MariaDB4jSampleTutorialTest: Skipping testLocalMariaDB(), because "
+//                            + executable
+//                            + " is not executable");
     }
 
-//    private void assertExecutable(String path) {
-//        if (!new File(path).canExecute()) {
-//            throw new IllegalStateException(path
-//                    + " not found/executable, but required for (only) this test; try e.g. sudo apt install mariadb-server ?");
-//        }
-//    }
-
     /**
-     * Illustrates how to use a mysqld binary that is extracted from "embedded"
-     * binaries in JAR on classpath.
+     * Illustrates how to use a mysqld binary that is extracted from "embedded" binaries in JAR on
+     * classpath.
      */
     @Test
     public void testEmbeddedMariaDB4j() throws Exception {
@@ -92,7 +98,8 @@ public class MariaDB4jSampleTutorialTest {
         check(config);
     }
 
-    protected void check(DBConfigurationBuilder config) throws SQLException, ManagedProcessException {
+    protected void check(DBConfigurationBuilder config)
+            throws SQLException, ManagedProcessException {
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
 
@@ -115,7 +122,8 @@ public class MariaDB4jSampleTutorialTest {
             qr.update(conn, "INSERT INTO hello VALUES ('Hello, world')");
 
             // Should be able to select from a table
-            List<String> results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
+            List<String> results =
+                    qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
             Assert.assertEquals(1, results.size());
             Assert.assertEquals("Hello, world", results.get(0));
 
@@ -141,14 +149,18 @@ public class MariaDB4jSampleTutorialTest {
         DB db = DB.newEmbeddedDB(config.build());
         db.start();
 
-        // Starting with MariaDB 10.4, the root user has an invalid password.
-        // We will therefore modify the root user password to a secure random string (a security best practice).
-        // Using the UID of the user that owns the data directory, we can execute this initial bootstrapping command:
-        // Note that on Windows MariaDB apparently does not implement this, still uses empty string password for the
+        // We will therefore modify the root user password to a secure random string (a security
+        // best practice).
+        // Using the UID of the user that owns the data directory, we can execute this initial
+        // bootstrapping command:
+        // Note that on Windows MariaDB apparently does not implement this, still uses empty string
+        // password for the
         // root user, so we can just use the root user.
-//        var randomRootPassword = RandomStringUtils.random(69, 97, 122, true, true);
-//        db.run("SET PASSWORD FOR 'root'@'localhost' = PASSWORD('" + randomRootPassword + "');",
-//                config.isWindows() ? "root" : System.getProperty("user.name"), "");
+//        var randomRootPassword = RandomStringUtils.secureStrong().next(69, 97, 122, true, true);
+//        db.run(
+//                "SET PASSWORD FOR 'root'@'localhost' = PASSWORD('" + randomRootPassword + "');",
+//                config.isWindows() ? "root" : System.getProperty("user.name"),
+//                "");
 
         String dbName = "mariaDB4jTestWSecurity"; // or just "test"
         if (!"test".equals(dbName)) {
@@ -170,13 +182,16 @@ public class MariaDB4jSampleTutorialTest {
 
             // Should be able to create a new user and grant privileges.
             qr.update(conn, "CREATE USER 'testUser'@'localhost' IDENTIFIED BY 'superSecret'");
-            qr.update(conn, "GRANT ALL PRIVILEGES ON mariaDB4jTestWSecurity.* TO 'testUser'@'localhost'");
+            qr.update(
+                    conn,
+                    "GRANT ALL PRIVILEGES ON mariaDB4jTestWSecurity.* TO 'testUser'@'localhost'");
 
             // reconnect with the new user
             conn = DriverManager.getConnection(config.getURL(dbName), "testUser", "superSecret");
 
             // Should be able to select from a table
-            List<String> results = qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
+            List<String> results =
+                    qr.query(conn, "SELECT * FROM hello", new ColumnListHandler<String>());
             Assert.assertEquals(1, results.size());
             Assert.assertEquals("Hello, world", results.get(0));
 

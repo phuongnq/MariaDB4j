@@ -14,7 +14,7 @@
          DBs/mariaDB4j-db-*/pom.xml versions (as those are also always
          non-SNAPSHOT, existing ones do NOT get changed).
      -->
-    <version>3.1.0.3</version>
+    <version>3.2.0</version>
     <packaging>pom</packaging>
 
     <name>MariaDB4j</name>
@@ -79,7 +79,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
+                <version>1.7.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
@@ -90,7 +90,7 @@
 
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.3.1</version>
                 <configuration>
                   <!-- This is super important (to avoid the binaries in the *-sources.jar) -->
                   <excludeResources>true</excludeResources>
@@ -135,7 +135,7 @@
                      <configuration>
                        <script>
                          // BeanShell is 2005-ish and thus doesn't support generics, varargs, try-with-resources or lambdas, so:
-                         // (If we do this kind of inline code in pom.xml more often, we shold have a new simple module in
+                         // (If we do this kind of inline code in pom.xml more often, we should have a new simple module in
                          //  odl-parent, which has *.java that we compile, and then just depend on it here and call one-line
                          //  static class methods only - it will be MUCH easier to write!)
                          void copy(File root, String glob, File target) {
@@ -230,7 +230,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.1</version>
+                        <version>3.2.7</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>

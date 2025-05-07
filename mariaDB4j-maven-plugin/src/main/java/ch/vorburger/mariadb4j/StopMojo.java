@@ -29,8 +29,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Stop a MariaDB4j database that has been started by the "start" goal.
- * Typically invoked once a test suite has completed.
+ * Stop a MariaDB4j database that has been started by the "start" goal. Typically invoked once a
+ * test suite has completed.
  *
  * @author William Dutton
  * @since 1.0.0
@@ -45,6 +45,7 @@ public class StopMojo extends AbstractMojo {
     @Parameter(property = "mariadb4j.stop.skip", defaultValue = "false")
     private boolean skip;
 
+    /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException {
         if (this.skip) {
@@ -64,9 +65,7 @@ public class StopMojo extends AbstractMojo {
         try {
             DBSingleton.shutdownDB();
         } catch (ManagedProcessException ex) {
-            throw new MojoExecutionException(
-                    "MariaDB4j Database. Could not stop gracefully",
-                    ex);
+            throw new MojoExecutionException("MariaDB4j Database. Could not stop gracefully", ex);
         }
     }
 

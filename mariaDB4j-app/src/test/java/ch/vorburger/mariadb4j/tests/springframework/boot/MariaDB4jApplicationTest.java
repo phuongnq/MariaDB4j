@@ -31,7 +31,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SpringBootTest(classes = MariaDB4jApplication.class, webEnvironment = NONE)
 public class MariaDB4jApplicationTest {
 
-    @Test public void testMariaDB4jApplication() {
+    @Test
+    public void testMariaDB4jApplication() {
         // We don't actually have to write anything here
     }
 }

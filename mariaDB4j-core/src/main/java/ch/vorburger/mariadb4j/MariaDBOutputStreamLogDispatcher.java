@@ -21,18 +21,21 @@ package ch.vorburger.mariadb4j;
 
 import ch.vorburger.exec.OutputStreamLogDispatcher;
 import ch.vorburger.exec.OutputStreamType;
-import org.slf4j.event.Level;
 
+import org.slf4j.event.Level;
 import java.util.Locale;
 
 /**
- * OutputStreamLogDispatcher for MariaDB. See <a href="https://github.com/vorburger/MariaDB4j/issues/27">issue #27</a>.
+ * OutputStreamLogDispatcher for MariaDB. See <a
+ * href="https://github.com/MariaDB4j/MariaDB4j/issues/27">issue #27</a>.
  *
  * @author Michael Vorburger
  */
 public class MariaDBOutputStreamLogDispatcher extends OutputStreamLogDispatcher {
 
-    @Override public Level dispatch(OutputStreamType type, String line) {
+    /** {@inheritDoc} */
+    @Override
+    public Level dispatch(OutputStreamType type, String line) {
         if (type == OutputStreamType.STDOUT) {
             return Level.INFO;
         }
