@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.craftercms.mariaDB4j</groupId>
@@ -54,18 +54,6 @@
             <email>mike@vorburger.ch</email>
             <url>http://www.vorburger.ch</url>
         </developer>
-        <developer>
-            <id>cortiz</id>
-            <name>Carlos Ortiz</name>
-            <email>carlos.ortiz@craftercms.org</email>
-            <url>http://craftercms.org</url>
-        </developer>
-        <developer>
-            <id>dejan.brkic</id>
-            <name>Dejan Brkic</name>
-            <email>dejan.brkic@craftersoftware.com</email>
-            <url>http://craftercms.org</url>
-        </developer>
     </developers>
 
     <contributors>
@@ -77,14 +65,12 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.7.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <publishingServerId>central-releases</publishingServerId>
                 </configuration>
             </plugin>
 
@@ -92,9 +78,9 @@
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                  <!-- This is super important (to avoid the binaries in the *-sources.jar) -->
-                  <excludeResources>true</excludeResources>
-                 <includePom>true</includePom>
+                    <!-- This is super important (to avoid the binaries in the *-sources.jar) -->
+                    <excludeResources>true</excludeResources>
+                    <includePom>true</includePom>
                 </configuration>
                 <executions>
                     <execution>
@@ -108,10 +94,10 @@
 
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                      <version>3.6.3</version>
-                      <configuration>
-                          <quiet>true</quiet>
-                      </configuration>
+                <version>3.6.3</version>
+                <configuration>
+                    <quiet>true</quiet>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -127,58 +113,57 @@
                 <artifactId>script-maven-plugin</artifactId>
                 <version>1.0.0</version>
                 <executions>
-                   <execution>
-                     <phase>prepare-package</phase>
-                     <goals>
-                       <goal>execute</goal>
-                     </goals>
-                     <configuration>
-                       <script>
-                         // BeanShell is 2005-ish and thus doesn't support generics, varargs, try-with-resources or lambdas, so:
-                         // (If we do this kind of inline code in pom.xml more often, we shold have a new simple module in
-                         //  odl-parent, which has *.java that we compile, and then just depend on it here and call one-line
-                         //  static class methods only - it will be MUCH easier to write!)
-                         void copy(File root, String glob, File target) {
-                             java.nio.file.DirectoryStream dirStream = java.nio.file.Files.newDirectoryStream(root.toPath(), glob);
-                             Iterator dirStreamIterator = dirStream.iterator();
-                             while (dirStreamIterator.hasNext()) {
-                                 java.nio.file.Path path = dirStreamIterator.next();
-                                 java.nio.file.Files.copy(path, new File(target, path.toFile().getName()).toPath(),
-                                     new java.nio.file.CopyOption[] {
-                                         java.nio.file.StandardCopyOption.REPLACE_EXISTING,
-                                         java.nio.file.StandardCopyOption.COPY_ATTRIBUTES
-                                     }
-                                 );
-                             }
-                             dirStream.close();
-                         }
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <script>
+                                // BeanShell is 2005-ish and thus doesn't support generics, varargs, try-with-resources or lambdas, so:
+                                // (If we do this kind of inline code in pom.xml more often, we shold have a new simple module in
+                                // odl-parent, which has *.java that we compile, and then just depend on it here and call one-line
+                                // static class methods only - it will be MUCH easier to write!)
+                                void copy(File root, String glob, File target) {
+                                    java.nio.file.DirectoryStream dirStream = java.nio.file.Files.newDirectoryStream(root.toPath(), glob);
+                                    Iterator dirStreamIterator = dirStream.iterator();
+                                    while (dirStreamIterator.hasNext()) {
+                                        java.nio.file.Path path = dirStreamIterator.next();
+                                        java.nio.file.Files.copy(path, new File(target, path.toFile().getName()).toPath(), new java.nio.file.CopyOption[] {
+                                                java.nio.file.StandardCopyOption.REPLACE_EXISTING,
+                                                java.nio.file.StandardCopyOption.COPY_ATTRIBUTES
+                                            }
+                                        );
+                                    }
+                                    dirStream.close();
+                                }
 
-                         File gitRepoRootDir = project.basedir;
-                         while (!new File(gitRepoRootDir, ".git").exists() &amp;&amp; gitRepoRootDir.getParentFile() != null) {
-                             gitRepoRootDir = gitRepoRootDir.getParentFile();
-                         }
+                                File gitRepoRootDir = project.basedir;
+                                while (!new File(gitRepoRootDir, ".git").exists() &amp;&amp; gitRepoRootDir.getParentFile() != null) {
+                                    gitRepoRootDir = gitRepoRootDir.getParentFile();
+                                }
 
-                         File target = new File(project.build.outputDirectory);
-                         target.mkdirs();
-                         copy(gitRepoRootDir, "README*", target);
-                         copy(gitRepoRootDir, "CONTRIBUTING*", target);
-                         copy(gitRepoRootDir, "CHANGES*", target);
-                         copy(gitRepoRootDir, "LEGAL*", target);
-                         copy(gitRepoRootDir, "CONTRIBUTORS*", target);
-                         copy(gitRepoRootDir, "LICENSE*", target);
-                         copy(gitRepoRootDir, "NOTICE*", target);
-                       </script>
-                     </configuration>
-                   </execution>
-                 </executions>
-                 <dependencies>
-                   <dependency>
-                     <groupId>org.apache-extras.beanshell</groupId>
-                     <artifactId>bsh</artifactId>
-                     <version>2.0b6</version>
-                   </dependency>
-                 </dependencies>
-              </plugin>
+                                File target = new File(project.build.outputDirectory);
+                                target.mkdirs();
+                                copy(gitRepoRootDir, "README*", target);
+                                copy(gitRepoRootDir, "CONTRIBUTING*", target);
+                                copy(gitRepoRootDir, "CHANGES*", target);
+                                copy(gitRepoRootDir, "LEGAL*", target);
+                                copy(gitRepoRootDir, "CONTRIBUTORS*", target);
+                                copy(gitRepoRootDir, "LICENSE*", target);
+                                copy(gitRepoRootDir, "NOTICE*", target);
+                            </script>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache-extras.beanshell</groupId>
+                        <artifactId>bsh</artifactId>
+                        <version>2.0b6</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
         </plugins>
 
@@ -210,7 +195,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -247,13 +232,14 @@
     </profiles>
 
     <distributionManagement>
-        <!-- http://central.sonatype.org/pages/apache-maven.html -->
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            <id>central-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
         </snapshotRepository>
-        <!-- <repository> isn't needed with nexus-staging-maven-plugin, it somehow
-             has this hard-coded or automatically find sit somehow, IFF <version> is non-SNAPSHOT -->
+        <repository>
+            <id>central-releases</id>
+            <url>https://central.sonatype.com/repository/maven-releases/</url>
+        </repository>
     </distributionManagement>
 
 </project>
