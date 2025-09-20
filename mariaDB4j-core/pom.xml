@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>mariaDB4j-core</artifactId>
+    <name>MariaDB Core</name>
 
     <dependencies>
         <dependency>

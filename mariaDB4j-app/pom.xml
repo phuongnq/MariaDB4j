@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>mariaDB4j-app</artifactId>
+    <name>MariaDB App</name>
 
     <properties>
         <hikaricp.version>3.3.0</hikaricp.version> <!-- Override the version defined by spring-boot -->

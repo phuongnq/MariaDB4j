@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>mariaDB4j-springboot</artifactId>
+    <name>MariaDB SpringBoot</name>
 
     <dependencies>
         <dependency>
