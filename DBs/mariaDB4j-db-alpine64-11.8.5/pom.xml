@@ -10,6 +10,7 @@
         <relativePath>../../mariaDB4j-pom-lite/pom.xml</relativePath>
     </parent>
 
+    <name>MariaDB4j DB Alpine 64</name>
     <artifactId>mariaDB4j-db-alpine64</artifactId>
     <version>11.8.5</version>
 </project>
